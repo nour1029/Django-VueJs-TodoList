@@ -27,7 +27,7 @@
                             <tr v-for="item in todo_list">
                                 <td>${item.title}</td>
                                 <td>${item.done}</td>
-                                <td><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#EditModal">
+                                <td><button type="button" v-on:click="getTodo(item.id)" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#EditModal">
                                     Edit</button>
                                     <button type="button" v-on:click="deleteTodo(item.id)" class="btn btn-danger">
                                         Delete</button>
@@ -46,11 +46,16 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                ...
-                                </div>
-                                <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary">Save changes</button>
+                                <form v-on:submit.prevent="editTodo()">
+                                    <div class="mb-5">
+                                        <label for="editAddInput" class="form-label">Todo Title</label>
+                                        <input type="text" class="form-control" id="editAddInput" placeholder="" v-model="current_todo.title">
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Edit Todo</button>
+                                    </div>
+                                </form>
                                 </div>
                             </div>
                         </div>
@@ -91,7 +96,6 @@
                                     </div>
                                 </form>
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -114,6 +118,7 @@
                     new_todo : {
                         title : null
                     },
+                    current_todo : {},
                 },
                 mounted:function(){
                     this.getTodoList();
@@ -137,6 +142,20 @@
                             this.getTodoList();
                         })
                     },
+                    getTodo:function(id){
+                        axios.get(`/todo/api/todo/${id}`)
+                        .then ((response) => {
+                            this.current_todo = response.data
+                            console.log(this.current_todo)
+                        })
+                    },
+                    editTodo:function(){
+                        axios.put(`/todo/api/todo/${this.current_todo.id}/`, this.current_todo)
+                        .then ((response) => {
+                            this.getTodoList();
+                        })
+                    },
+
                 }
             })
         </Script>
