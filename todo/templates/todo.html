@@ -121,10 +121,14 @@
                     current_todo : {},
                 },
                 mounted:function(){
-                    this.getTodoList();
+                    axios.get('/todo/api/todo/')
+                        .then ((response) => {
+                            this.todo_list = response.data
+                        }
+                    )
                 },
                 methods:{
-                    getTodoList:function(){
+                    getTodoList: function(){
                         axios.get('/todo/api/todo/')
                         .then ((response) => {
                             this.todo_list = response.data
